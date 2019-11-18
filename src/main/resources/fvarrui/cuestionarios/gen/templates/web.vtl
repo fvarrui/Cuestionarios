@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<title>Calificaciones del cuestionario</title>
+	</head>
+	<body>
+	
+		<h2>Puntuaci&oacute;n de los ex&aacute;menes</h2>
+
+		<hr/>		
+#set ($lim = ${cuestionario.limite} - ${cuestionario.anuladas})
+
+		Soluci&oacute;n:  ${cuestionario.solucion}<br/> 
+		L&iacute;mite: ${lim} puntos para aprobar<br/> 
+		Anuladas: ${cuestionario.anuladas}<br/> 
+#if (${cuestionario.penalizacion} == 0)
+		Penalizaci&oacute;n: sin penalizaci&oacute;n <br/>
+#else 
+		Penalizaci&oacute;n: 1 punto menos por cada ${cuestionario.penalizacion} <br/> 
+#end
+		
+		<hr/>
+
+#foreach ($hoja in ${cuestionario.hojas})
+		<table border="1" width="100%">
+			<tr>
+				<th width="200">Nombre</th>
+				<td>${hoja.nombre}</td>
+			</tr>
+			<tr>
+				<th>Respuestas</th>
+				<td>${hoja.respuestas}</td>
+			</tr>
+			<tr>
+				<th>Correctas (${hoja.correccion.correctas.size()})</th>
+				<td>
+#foreach ($correcta in ${hoja.correccion.correctas})
+#set ($pos = $correcta - 1)
+				$correcta(${hoja.respuestas.charAt($pos)}) , 
+#end
+				</td>
+			</tr>
+			<tr>
+				<th>Sin responder (${hoja.correccion.sinContestar.size()})</th>
+				<td>
+#foreach ($sinContestar in ${hoja.correccion.sinContestar})
+#set ($pos = $sinContestar - 1)
+				$sinContestar(${cuestionario.solucion.charAt($pos)}) , 
+#end
+				</td>
+			</tr>
+			<tr>
+				<th>Incorrectas (${hoja.correccion.fallos.size()}) *</th>
+				<td>
+#foreach ($fallo in ${hoja.correccion.fallos})
+#set ($pos = $fallo - 1)
+				$fallo(${hoja.respuestas.charAt($pos)} -> ${cuestionario.solucion.charAt($pos)}) , 
+#end
+				</td>
+			</tr>
+			<tr>
+				<th>Penalizacion por ${hoja.correccion.fallos.size()} fallos</th>
+				<td>${hoja.correccion.penalizacion} punto(s)</td>
+			</tr>
+			<tr>
+				<th>Nota (${hoja.correccion.correctas.size()} - ${hoja.correccion.penalizacion})</th>
+				<td>${hoja.correccion.calificacion} de ${cuestionario.solucion.length()} (${hoja.correccion.calificacionSobre100} sobre 100)</td>
+			</tr>
+		</table>
+		<hr/>
+#end
+
+		* <b>NumPregunta(TuRespuesta -> RespuestaCorrecta)</b> ; por ejemplo, si en la pregunta 7 respondiste A y la correcta era B : <b>7(A -> B)</b>.
+	
+	</body>
+</html>
